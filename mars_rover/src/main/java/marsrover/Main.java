@@ -3,23 +3,42 @@ package mars_rover.src.main.java.marsrover;
 import java.util.Scanner;
 public class Main {
 
-    private static void executeCommand(char command, Rover rover, Grid grid){
+    private static void executeCommand(char command, Rover rover, Grid grid, Scanner sc){
         switch(command){
             case 'M':
-                new MoveCommand(rover, grid).execute();;
+                try{
+                    new MoveCommand(rover, grid).execute();
+                    System.out.println("After Command : "+command);
+                    rover.showPosition(grid);
+                }catch(RuntimeException e){
+                    System.out.println("Error : "+e.getMessage());
+                    if(e.getMessage().equals("Alert! Obstacle Ahead Rover not Safe to Move Ahead")){
+                        System.out.print("Enter the next command (M, L, R, or exit to quit) : ");
+                        String nextCommand=sc.nextLine();
+                        if(nextCommand.equalsIgnoreCase("exit")){
+                            System.exit(0);
+                        }
+                        executeCommand(nextCommand.charAt(0), rover, grid, sc);
+                    }
+                }
                 break;
             case 'L':
-                new TurnLeftCommand(rover).execute();;
+                new TurnLeftCommand(rover).execute();
+                System.out.println("After Command : "+command);
+                rover.showPosition(grid);
                 break;
             case 'R':
-                new TurnRightCommand(rover).execute();;
+                new TurnRightCommand(rover).execute();
+                System.out.println("After Command : "+command);
+                rover.showPosition(grid);
                 break;
             default:
-                throw new IllegalArgumentException("Invalid command : "+ command);
+                System.out.println("Invalid Command : "+command);
+                break;
             }
     }
 
-    private static void executeWithParameters(int gridSize,int startX,int startY,char startDirection,String commands,int[][] obstacles){
+    private static void executeWithParameters(int gridSize,int startX,int startY,char startDirection,String commands,int[][] obstacles, Scanner sc){
         Grid grid = new Grid(gridSize);
         for(int[] obstcale: obstacles){
             grid.setObstacle(obstcale[0], obstcale[1], true);
@@ -29,7 +48,7 @@ public class Main {
         rover.showPosition(grid);
         for(char command:commands.toCharArray()){
             try{
-                executeCommand(command, rover, grid);
+                executeCommand(command, rover, grid, sc);
                 System.out.println("After Command : "+ command);
                 rover.showPosition(grid);
             }catch(RuntimeException e){
@@ -38,10 +57,10 @@ public class Main {
             }
             System.out.println("Final Position :");
             rover.showPosition(grid);
-            System.out.println("Status Report : Rover is at (" +rover.getX()+ ", " +rover.getY()+ ", facing " +rover.getDirection()+ ". No Obstacles detected.");
+            System.out.println("Status Report : Rover is at (" +rover.getX()+ ", " +rover.getY()+ "), facing " +rover.getDirection()+ ". No Obstacles detected.");
     }
 
-    private static void executeWithGivenParameters(){
+    private static void executeWithGivenParameters(Scanner sc){
         int gridSize=10;
             Grid grid=new Grid(gridSize);
             grid.setObstacle(2,2,true);
@@ -53,7 +72,7 @@ public class Main {
 
             for(char command:commands){
                 try{
-                    executeCommand(command, rover, grid);
+                    executeCommand(command, rover, grid, sc);
                     System.out.println("After Command : "+ command);
                     rover.showPosition(grid);
                 }catch(RuntimeException e){
@@ -87,7 +106,7 @@ public class Main {
             obstacles[i][1]=sc.nextInt();
         }
 
-        executeWithParameters(gridSize, startX, startY, startDirection, commands, obstacles);
+        executeWithParameters(gridSize, startX, startY, startDirection, commands, obstacles, sc);
     }
 
     public static void main(String args[]){
@@ -98,7 +117,7 @@ public class Main {
         int option=sc.nextInt();
         switch(option){
             case 1:
-                executeWithGivenParameters();
+                executeWithGivenParameters(sc);
                 break;
             case 2:
                 executeWithUserParameters(sc);
