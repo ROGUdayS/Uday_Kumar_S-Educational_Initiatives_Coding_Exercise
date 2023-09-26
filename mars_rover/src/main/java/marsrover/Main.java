@@ -1,8 +1,6 @@
 package mars_rover.src.main.java.marsrover;
 
 import java.util.Scanner;
-import java.util.List;
-import java.util.ArrayList;
 
 public class Main {
     public static void main(String args[]){
@@ -31,8 +29,59 @@ public class Main {
                     + "), facing " + rover.getDirection() + (rover.hasObstacleInFront(rover.getGrid()) ? " (Obstacle found)" : " (No Obstacles found)"));
                 break;
             case 2:
-                rover=createGridWithCustomParameters(sc);
-                executeCustomCommands(sc,rover);
+                System.out.println("Input the grid size :");
+                int gridSize=sc.nextInt();
+                int startX, startY;
+                char startDirection;
+                int obstacleCount;
+                do{
+                    System.out.println("Enter starting X Position : ");
+                    startX=sc.nextInt();
+                }while(startX<0||startX>=gridSize);
+                do{
+                    System.out.println("Enter starting Y Position : ");
+                    startY=sc.nextInt();
+                }while(startY<0||startY>=gridSize);
+                do{
+                    System.out.println("Enter starting Direction ( N, S, E, W ) : ");
+                    startDirection=sc.next().charAt(0);
+                }while(startDirection!='N' && startDirection!='S' && startDirection!='W' && startDirection!='E');
+                do{
+                    System.out.println("Enter number of obstacles ");
+                    obstacleCount=sc.nextInt();
+                }while(obstacleCount<0||obstacleCount>gridSize*gridSize);
+                int obstacles[][]=new int [obstacleCount][2];
+                for(int i=0;i<obstacleCount;i++){
+                    do{
+                        System.out.println("Enter obstacle X : ");
+                        obstacles[i][0]=sc.nextInt();
+                    }while(obstacles[i][0]<0||obstacles[i][0]>=gridSize);
+                    do{
+                        System.out.println("Enter obstacle Y : ");
+                        obstacles[i][1]=sc.nextInt();
+                    }while(obstacles[i][1]<0||obstacles[i][1]>=gridSize);
+                }
+                rover=createGrid(gridSize, startX, startY, startDirection, obstacles, sc);
+                while(true){
+                    System.out.println("Enter a set of commands or type (exit) :");
+                    String input =sc.next();
+                    if(input.equalsIgnoreCase("exit")){
+                        System.out.println("Final Position :");
+                        System.out.println("Status Report: Rover is at (" + rover.getX() + "), " + rover.getY()+ "), facing " + rover.getDirection() + (rover.hasObstacleInFront(rover.getGrid()) ? " (Obstacle found)" : " (No Obstacles found)"));
+                        break;
+                    }
+                    char commands[]=input.toCharArray();
+                    for(char command:commands){
+                        try{    
+                            executeCommand(command, rover, rover.getGrid());
+                            rover.showPosition(rover.getGrid());
+                        }catch(RuntimeException e){
+                            System.out.println("Error : "+e.getMessage());
+                            break;
+                    }
+                }
+
+                }
                 break;
             default:
                 System.out.println("Invalid Option Exiting Program Adios!");
@@ -68,5 +117,3 @@ public class Main {
             }
     }
 }
-
-//Hey this is my new logic I want the commands to stop executing if an obstacle is found I want the the rover to report Status Report : Rover is at (x, y), facing 'Direction' (Obstacle found or No Obstacles found)
