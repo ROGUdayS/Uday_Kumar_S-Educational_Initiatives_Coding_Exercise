@@ -4,20 +4,14 @@ public class Rover {
     private int x;
     private int y;
     private char direction;
-
-    // Default Constructor if no parameters are declared then the rover will start the default co-ordinates
-    // The Default positions are (0,0) facing the North direction
-    public Rover(){
-        x=0;
-        y=0;
-        direction='N';
-    }
+    private Grid grid;
 
     // Constructor for (x,y) co-ordinates along with Direction is mentioned
-    public Rover(int x, int y, char direction){
+    public Rover(int x, int y, char direction, Grid grid){
         this.x=x;
         this.y=y;
         this.direction=direction;
+        this.grid=grid;
     }
 
     // Setters
@@ -44,6 +38,37 @@ public class Rover {
 
     public char getDirection(){
         return direction;
+    }
+    public Grid getGrid(){
+        return grid;
+    }
+
+    public int [] calulateNextPosition(){
+        int posX=x;
+        int posY=y;
+        char direction=getDirection();
+
+        int dx[] = {0,0,1,-1}; // Change in x co-ordinates for N, S, E, W
+        int dy[] = {1,-1,0,0}; // Change in y co-ordinates for N, S, E, W
+
+        int newDirectionIndex = "NSEW".indexOf(direction);
+        if(newDirectionIndex == -1){
+            throw new RuntimeException("Error : Invalid Direction!");
+        }
+
+        posX+=dx[newDirectionIndex];
+        posY+=dy[newDirectionIndex];
+        return new int[]{posX, posY};
+    }
+
+    public boolean hasObstacleInFront(Grid grid){
+        int nextPosition[]=calulateNextPosition();
+        int posX=nextPosition[0];
+        int posY=nextPosition[1];
+        if(posX<0||posX>=grid.getSize()||posY<0||posY>=grid.getSize()){
+            throw new RuntimeException("Error : The Rover is Out of Bounds!");
+        }
+        return grid.hasObstacles(posX, posY);
     }
 
     public void showPosition(Grid grid){
