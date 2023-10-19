@@ -48,8 +48,8 @@ public class Rover {
         int posY=y;
         char direction=getDirection();
 
-        int dx[] = {0,0,1,-1}; // Change in x co-ordinates for N, S, E, W
-        int dy[] = {1,-1,0,0}; // Change in y co-ordinates for N, S, E, W
+        int dx[] = {0,0,1,-1}; // Change in x co-ordinates for E, W
+        int dy[] = {1,-1,0,0}; // Change in y co-ordinates for N, S
 
         int newDirectionIndex = "NSEW".indexOf(direction);
         if(newDirectionIndex == -1){

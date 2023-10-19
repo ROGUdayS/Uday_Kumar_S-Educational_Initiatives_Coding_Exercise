@@ -8,7 +8,7 @@ public class Grid {
             throw new IllegalArgumentException("Grid size must be greater than zero!");
         }
         cells = new Cell[size][size];
-        // Lets Initialize the grid cells
+        // Initialize the grid cells
         for(int x=0;x<size;x++){
             for(int y=0;y<size;y++){
                 cells[x][y]=new Cell();
